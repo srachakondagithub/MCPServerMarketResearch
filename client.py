@@ -138,6 +138,16 @@ async def main():
             print("\nLLM Response:")
             print(response.choices[0].message.content)
 
+            # Discover available MCP resources
+            print()
+            resources = await session.list_resources()
+            for resource in resources.resources:
+                print("Resource:", resource.uri)    
+
+            resource_result = await session.read_resource("market://topics")
+            print("\nResource Content:")
+            print(resource_result.contents[0].text)
+
 if __name__ == "__main__":
     import asyncio
     asyncio.run(main())

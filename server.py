@@ -77,5 +77,17 @@ def competitor_analysis_prompt(company: str) -> str:
     Provide the analysis in a clear, structured format.
     """
 
+@mcp.resource("market://topics")
+def market_topics() -> str:
+    """Provide common market research topics."""
+    return """
+Market Research Topics:
+- Company overview
+- Competitors
+- Product portfolio
+- Pricing
+- Recent news
+"""
+
 if __name__ == "__main__":
     mcp.run()
