@@ -109,6 +109,35 @@ async def main():
             print("\nFinal Answer:")
             print(final_response.choices[0].message.content)
 
+            prompts = await session.list_prompts()
+            for prompt in prompts.prompts:
+                print("Prompt:", prompt.name)
+                print("Description:", prompt.description)
+
+            company = input("Enter company name for competitive analysis: ")
+
+            prompt_result = await session.get_prompt(
+                "competitor_analysis_prompt",
+                arguments={"company": company}
+            )
+
+            print("\nGenerated Prompt:")
+            print(prompt_result.messages[0].content.text)
+
+            prompt_text = prompt_result.messages[0].content.text
+            response = await llm.chat.completions.create(
+                model=os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT"),
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt_text
+                    }
+                ]
+            )
+
+            print("\nLLM Response:")
+            print(response.choices[0].message.content)
+
 if __name__ == "__main__":
     import asyncio
     asyncio.run(main())
