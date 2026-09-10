@@ -4,15 +4,17 @@ from dotenv import load_dotenv
 from unittest import result
 
 from openai import AsyncAzureOpenAI
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
+# from mcp import ClientSession, StdioServerParameters
+# from mcp.client.stdio import stdio_client
+from mcp import ClientSession
+from mcp.client.streamable_http import streamable_http_client
 
 load_dotenv()
 
-server_params = StdioServerParameters(
-    command="uv",
-    args=["run", "server.py"],
-)
+# server_params = StdioServerParameters(
+#     command="uv",
+#     args=["run", "server.py"],
+# )
 
 llm = AsyncAzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
@@ -21,11 +23,13 @@ llm = AsyncAzureOpenAI(
 )
 
 async def main():
-
-    async with stdio_client(server_params) as (read, write):
-
+    async with streamable_http_client(
+    "http://127.0.0.1:8000/mcp"
+        ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
+
+        # your existing code here
             print("Connected to MCP server")
 
             tools = await session.list_tools()
